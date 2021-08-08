@@ -331,4 +331,4 @@ mpfr_jn (mpfr_ptr res, long n, mpfr_srcptr z, mpfr_rnd_t r)
 }
 
 #define MPFR_JN
-#include "jyn_asympt.c"
+#include "jyn_asympt.i"
