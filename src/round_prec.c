@@ -26,25 +26,25 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #define mpfr_round_raw_generic mpfr_round_raw
 #define flag 0
 #define use_inexp 1
-#include "round_raw_generic.i"
+#include "round_raw_generic.c"
 
 /* mpfr_round_raw_2 is called from mpfr_round_raw2 */
 #define mpfr_round_raw_generic mpfr_round_raw_2
 #define flag 1
 #define use_inexp 0
-#include "round_raw_generic.i"
+#include "round_raw_generic.c"
 
 /* Seems to be unused. Remove comment to implement it.
 #define mpfr_round_raw_generic mpfr_round_raw_3
 #define flag 1
 #define use_inexp 1
-#include "round_raw_generic.i"
+#include "round_raw_generic.c"
 */
 
 #define mpfr_round_raw_generic mpfr_round_raw_4
 #define flag 0
 #define use_inexp 0
-#include "round_raw_generic.i"
+#include "round_raw_generic.c"
 
 /* Note: if the new prec is lower than the current one, a reallocation
    must not be done (see exp_2.c). */

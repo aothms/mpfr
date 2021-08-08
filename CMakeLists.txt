@@ -7,6 +7,21 @@ add_definitions(-D_GMP_IEEE_FLOATS -DMPFR_HAVE_GMP_IMPL -DHAVE_CONFIG_H)
 
 file(GLOB src_filenames src/*.c src/*.h)
 add_library(mpfr ${src_filenames} "build.vs19/get_patches.c")
+
+# .c files that are included in other sources
+# and are not top level compilation units
+set_source_files_properties(
+    src/jyn_asympt.c
+    src/round_raw_generic.c 
+    PROPERTIES HEADER_FILE_ONLY ON)
+
+# I have yet to understand what these are
+set_source_files_properties(
+    src/sub1sp1_extracted.c
+    src/add1sp1_extracted.c
+    src/mul_1_extracted.c 
+    PROPERTIES HEADER_FILE_ONLY ON)
+    
 target_link_libraries(mpfr "${MPIR_DIRECTORY}/mpir.lib")
 
 # configure_file(src/mparam_h.in inc/mparam.h)
@@ -18,12 +33,14 @@ if (MSVC_VERSION GREATER 1600)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
+# tests to be excluded on Windows
 set(excluded_tests "RRTest.c" "tgeneric.c" "tgeneric_ui.c")
+# .c source files that form a set of utility functions for the tests
+set(lib_test_filenames "tests/cmp_str.c" "tests/memory.c" "tests/random2.c" "tests/rnd_mode.c" "tests/tests.c")
 
 if (ENABLE_TESTS)
     include(CTest)
     
-    file(GLOB lib_test_filenames tests/lib/*.c)
     add_library(lib_test ${lib_test_filenames})
     target_include_directories(lib_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/tests")
     set_target_properties(lib_test PROPERTIES FOLDER "tests" )
@@ -31,9 +48,14 @@ if (ENABLE_TESTS)
     file(GLOB test_filenames tests/*.c)
     foreach(filename ${test_filenames})
         
-        # skip excluded tests
+        # skip excluded tests and library files
         set(skip 0)
         foreach(et ${excluded_tests})
+            if ("${filename}" MATCHES "${et}$")
+                set(skip 1)
+            endif()
+        endforeach()
+        foreach(et ${lib_test_filenames})
             if ("${filename}" MATCHES "${et}$")
                 set(skip 1)
             endif()
